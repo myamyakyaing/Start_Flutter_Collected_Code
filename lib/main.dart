@@ -3,10 +3,12 @@ import 'dart:ui';
 import 'dart:math';
 import 'package:demo/question.dart';
 import 'package:demo/quiz_brain.dart';
+import 'package:demo/story_brain.dart';
 import 'package:english_words/english_words.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:audioplayers/src/audio_cache.dart';
 import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 QuizBrain quizBrain = QuizBrain();
 
@@ -27,6 +29,100 @@ void main() {
   //   ),
   // );
 }
+
+class Destini extends StatelessWidget {
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData.dark(),
+      home: StoryPage(),
+    );
+  }
+}
+
+
+StoryBrain storyBrain = StoryBrain();
+
+class StoryPage extends StatefulWidget {
+  _StoryPageState createState() => _StoryPageState();
+}
+
+class _StoryPageState extends State<StoryPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('images/background.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        padding: EdgeInsets.symmetric(vertical: 50.0, horizontal: 15.0),
+        constraints: BoxConstraints.expand(),
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Expanded(
+                flex: 12,
+                child: Center(
+                  child: Text(
+                    storyBrain.getStory(),
+                    style: TextStyle(
+                      fontSize: 25.0,
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: FlatButton(
+                  onPressed: () {
+                    setState(() {
+                      storyBrain.nextStory(1);
+                    });
+                  },
+                  color: Colors.red,
+                  child: Text(
+                    storyBrain.getChoice1(),
+                    style: TextStyle(
+                      fontSize: 20.0,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              Expanded(
+                flex: 2,
+                child: Visibility(
+                  visible: storyBrain.buttonShouldBeVisible(),
+                  child: FlatButton(
+                    onPressed: () {
+                      //Choice 2 made by user.
+                      setState(() {
+                        storyBrain.nextStory(2);
+                      });
+                    },
+                    color: Colors.blue,
+                    child: Text(
+                      storyBrain.getChoice2(),
+                      style: TextStyle(
+                        fontSize: 20.0,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 
 class Quizzler extends StatelessWidget {
   @override
@@ -97,6 +193,193 @@ class _QuizPageState extends State<QuizPage> {
     ),
   ];
 
+  List<Icon> showScoreHistory = [];
+
+  void checkAnswer(bool userPickedAnswer, String clickType){
+    if(clickType == 'T') {
+      if (userPickedAnswer == true) {
+        quizBrain.nextQuestion();
+      }
+    }else{
+      if (userPickedAnswer == false) {
+        quizBrain.nextQuestion();
+      }
+    }
+  }
+
+  void sampleAlert(){
+    Alert(
+      context: context,
+      title: 'Finished!',
+      desc: 'You\'ve reached the end of the quiz.',
+    ).show();
+  }
+
+  void alertWithButton(){
+    Alert(
+      context: context,
+      type: AlertType.error,
+      title: "RFLUTTER ALERT",
+      desc: "Flutter is more awesome with RFlutter Alert.",
+      buttons: [
+        DialogButton(
+          child: const Text(
+            "COOL",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () => Navigator.pop(context),
+          width: 120,
+        )
+      ],
+    ).show();
+  }
+
+  void alertWithButtons(){
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "RFLUTTER ALERT",
+      desc: "Flutter is more awesome with RFlutter Alert.",
+      buttons: [
+        DialogButton(
+          child: const Text(
+            "FLAT",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: const Color.fromRGBO(0, 179, 134, 1.0),
+        ),
+        DialogButton(
+          child: const Text(
+            "GRADIENT",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () => Navigator.pop(context),
+          gradient: const LinearGradient(colors: [
+            Color.fromRGBO(116, 116, 191, 1.0),
+            Color.fromRGBO(52, 138, 199, 1.0)
+          ]),
+        )
+      ],
+    ).show();
+  }
+
+  void alertWithStyle(){
+    var alertStyle = AlertStyle(
+      animationType: AnimationType.fromTop,
+      isCloseButton: false,
+      isOverlayTapDismiss: false,
+      descStyle: const TextStyle(fontWeight: FontWeight.bold),
+      descTextAlign: TextAlign.start,
+      animationDuration: const Duration(milliseconds: 400),
+      alertBorder: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(0.0),
+        side: const BorderSide(
+          color: Colors.grey,
+        ),
+      ),
+      titleStyle: const TextStyle(
+        color: Colors.red,
+      ),
+      alertAlignment: Alignment.topCenter,
+    );
+
+    Alert(
+      context: context,
+      style: alertStyle,
+      type: AlertType.info,
+      title: "RFLUTTER ALERT",
+      desc: "Flutter is more awesome with RFlutter Alert.",
+      buttons: [
+        DialogButton(
+          child: const Text(
+            "COOL",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: const Color.fromRGBO(0, 179, 134, 1.0),
+          radius: BorderRadius.circular(0.0),
+        ),
+      ],
+    ).show();
+  }
+
+  void alertWithCustomImage(){
+    Alert(
+      context: context,
+      title: "RFLUTTER ALERT",
+      desc: "Flutter is better with RFlutter Alert.",
+      //image: Image.asset("assets/success.png"),
+    ).show();
+  }
+
+  void alertWithCustomIntent(){
+    Alert(
+        context: context,
+        title: "LOGIN",
+        content: Column(
+          children: const <Widget>[
+            TextField(
+              decoration: InputDecoration(
+                icon: Icon(Icons.account_circle),
+                labelText: 'Username',
+              ),
+            ),
+            TextField(
+              obscureText: true,
+              decoration: InputDecoration(
+                icon: Icon(Icons.lock),
+                labelText: 'Password',
+              ),
+            ),
+          ],
+        ),
+        buttons: [
+          DialogButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text(
+              "LOGIN",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+          )
+        ]).show();
+  }
+
+  void checkAnswerWithStatic(bool userPickedAnswer){
+    bool correctAnswer = quizBrain.getQuestionAnswer();
+    if (quizBrain.isFinished() == true) {
+
+      //Alert types
+      //sampleAlert();
+      //alertWithButton();
+      //alertWithButtons();
+      //alertWithStyle();
+      //alertWithCustomImage();
+      alertWithCustomIntent();
+
+      quizBrain.reset();
+
+    }else {
+      if (userPickedAnswer == correctAnswer) {
+        showScoreHistory.add(
+            const Icon(
+              Icons.check,
+              color: Colors.green,)
+
+        );
+      } else {
+        showScoreHistory.add(
+            const Icon(
+              Icons.close,
+              color: Colors.red,)
+
+        );
+      }
+    }
+    quizBrain.nextQuestion();
+
+  }
+
   int questionNumber = 0;
 
   @override
@@ -137,12 +420,13 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
 
-              bool correctAnswer = quizBrain.getQuestionAnswer(questionNumber);
-              if(correctAnswer == true){
-                quizBrain.nextQuestion();
-              }else{
-                quizBrain.stayQuestion();
-              }
+                //checkAnswer(quizBrain.getQuestionAnswer(), 'T');
+
+                //For Static
+                if(showScoreHistory.length >= 12) {
+                  showScoreHistory.clear();
+                }
+                checkAnswerWithStatic(true);
 
               //for first line of bottom bar
                 if(scoreTrueKeeper.length >= 12) {
@@ -184,12 +468,13 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
 
-                bool correctAnswer = quizBrain.getQuestionAnswer(questionNumber);
-                if(correctAnswer == false){
-                  quizBrain.nextQuestion();
-                }else{
-                  quizBrain.stayQuestion();
+                //checkAnswer(quizBrain.getQuestionAnswer(), 'F');
+
+                //For Static
+                if(showScoreHistory.length >= 12) {
+                  showScoreHistory.clear();
                 }
+                checkAnswerWithStatic(false);
 
                 //for first line of bottom bar
                 int count = 0;
@@ -216,6 +501,12 @@ class _QuizPageState extends State<QuizPage> {
                 });
               },
             ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.all(15.0),
+          child: Row(
+            children: showScoreHistory,
           ),
         ),
        Padding(
@@ -636,6 +927,23 @@ class Challenge1App extends StatelessWidget {
           ),
         ));
   }
+}
+
+class AlertDialogs extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        home: Scaffold(
+        backgroundColor: Colors.teal,
+        body: SafeArea(
+        child: Container(
+            //Alert(context: context, title: "RFLUTTER", desc: "Flutter is awesome.").show();
+        )
+        )
+        )
+    );
+  }
+
 }
 
 
